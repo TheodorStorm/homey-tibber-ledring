@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- The '/homey.js' script must be included in your settings view to work -->
+    <script
+      type="text/javascript"
+      src="/homey.js"
+      data-origin="settings"
+    ></script>
+  </head>
+  <body>
+    <h1 data-i18n="settings.title">
+      <!-- This will be filled with the translated string with key 'settings.title'. -->
+    </h1>
+    <p data-i18n="settings.subtitle">
+      <!-- This field will also be translated -->
+    </p>
+
+    <fieldset>
+      <legend>My Settings</legend>
+
+      <div class="field row">
+        <label for="apiKey">Tibber API Key</label>
+        <input id="apiKey" type="text" value="" />
+      </div>
+    </fieldset>
+
+    <button id="save" class="right">Save changes</button>
+
+    <script type="text/javascript">
+      function onHomeyReady(Homey) {
+        var apiKeyElement = document.getElementById("apiKey");
+        var saveElement = document.getElementById("save");
+
+        Homey.get("tibberApiKey", function (err, val) {
+          if (err) return Homey.alert(err);
+          if (val) apiKeyElement.value = val;
+        });
+
+        saveElement.addEventListener("click", function (e) {
+          Homey.set("tibberApiKey", apiKeyElement.value, function (err) {
+            if (err) return Homey.alert(err);
+          });
+        });
+
+        Homey.ready();
+      }
+    </script>
+  </body>
+</html>
