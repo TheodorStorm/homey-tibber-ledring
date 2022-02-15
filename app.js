@@ -26,7 +26,8 @@ class MyApp extends Homey.App {
     if (MyApp.updateAnimationTimer) clearInterval(MyApp.updateAnimationTimer);
 
     if (this.homey.settings.get('tibberApiKey')) {
-      this.loadTibberPrices(function() {
+      this.loadTibberPrices(function(data) {
+        // console.log(JSON.stringify(data));
         MyApp.appInstance.updateAnimation();
         MyApp.updateAnimationTimer = setInterval(MyApp.appInstance.updateAnimation, 59 * 1000);
       });
@@ -101,7 +102,7 @@ class MyApp extends Homey.App {
     // Finally, shift until current hour is the first element
     for (let i = 0; i < startHour; i++) frame.push(frame.shift());
 
-    console.log(startHour);
+    // console.log(startHour);
     console.log(frame);
 
     // Add frame to animation
@@ -163,7 +164,7 @@ class MyApp extends Homey.App {
    * Load prices from Tibber API
    */  
   loadTibberPrices(callback) {
-    let json = { "query": "{ viewer { homes { currentSubscription { priceInfo { current { level startsAt } today { level startsAt } tomorrow { level startsAt } } } } } }" };
+    let json = { "query": "{ viewer { homes { id appNickname address { address1 city } currentSubscription { priceInfo { current { level startsAt } today { level startsAt } tomorrow { level startsAt } } } } } }" };
     let options = {
       host: 'api.tibber.com',
       port: 443,
@@ -171,7 +172,7 @@ class MyApp extends Homey.App {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.homey.settings.get('tibberApiKey')
+        'Authorization': 'Bearer ' + MyApp.appInstance.homey.settings.get('tibberApiKey')
       }
     };
 
@@ -182,7 +183,9 @@ class MyApp extends Homey.App {
       });
       res.on('end', function(){
           MyApp.tibberPrices = JSON.parse(body);
-          if (callback) callback();
+          //console.log(body);
+          MyApp.appInstance.homey.settings.set('tibberData', MyApp.tibberPrices);
+          if (callback) callback(MyApp.tibberPrices);
       });
     });
 

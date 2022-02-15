@@ -28,5 +28,41 @@
   "author": {
     "name": "Theodor Storm",
     "email": "theodor@tstorm.se"
-  }
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Home"
+      },
+      "class": "other",
+      "capabilities": [
+        "meter_power",
+        "light_hue",
+        "measure_power"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/home/assets/images/small.png",
+        "large": "/drivers/home/assets/images/large.png",
+        "xlarge": "/drivers/home/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "home"
+    }
+  ]
 }
