@@ -5,9 +5,10 @@
   "class": "other",
   "capabilities": [
     "meter_power",
-    "light_hue",
     "measure_power"
   ],
+  "capabilitiesOptions": {
+  },
   "platforms": [
     "local"
   ],

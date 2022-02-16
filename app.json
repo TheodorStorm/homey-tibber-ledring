@@ -37,9 +37,9 @@
       "class": "other",
       "capabilities": [
         "meter_power",
-        "light_hue",
         "measure_power"
       ],
+      "capabilitiesOptions": {},
       "platforms": [
         "local"
       ],
@@ -65,7 +65,34 @@
           "template": "add_devices"
         }
       ],
-      "id": "home"
+      "id": "home",
+      "settings": [
+        {
+          "id": "ledring",
+          "type": "checkbox",
+          "label": {
+            "en": "Tibber LED Ring"
+          },
+          "value": false,
+          "hint": {
+            "en": "Colors the Homey Pro LED ring according to energy price."
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "capabilities": {
+    "price_level": {
+      "type": "number",
+      "title": {
+        "en": "Price Level"
+      },
+      "uiComponent": "color",
+      "getable": true,
+      "setable": false,
+      "min": 0,
+      "max": 1,
+      "step": 0.01
+    }
+  }
 }

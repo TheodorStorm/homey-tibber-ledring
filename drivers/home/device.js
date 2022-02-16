@@ -9,6 +9,16 @@ class MyDevice extends Device {
    */
   async onInit() {
     this.log('MyDevice has been initialized');
+    const deviceSettings = this.getSettings();
+    const appSettings = this.homey.settings;
+
+    let selectedHomeId = appSettings.get("selectedHomeId");
+    if (selectedHomeId == this.getData().id) {
+      deviceSettings.ledring = true;
+    } else {
+      deviceSettings.ledring = false;
+    }
+    this.setSettings(deviceSettings);
   }
 
   /**
@@ -28,6 +38,13 @@ class MyDevice extends Device {
    */
   async onSettings({ oldSettings, newSettings, changedKeys }) {
     this.log('MyDevice settings where changed');
+    const appSettings = this.homey.settings;
+
+    if (newSettings.ledring) {
+      appSettings.set("selectedHomeId", this.getData().id);
+    } else if (appSettings.get("selectedHomeId") == this.getData().id) {
+      appSettings.set("selectedHomeId", null);
+    }
   }
 
   /**

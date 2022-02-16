@@ -16,7 +16,14 @@ class MyApp extends Homey.App {
     MyApp.appInstance = this;
 
     this.homey.settings.on('set', function(key) {
-      MyApp.appInstance.initTibber();
+      switch (key) {
+        case 'selectedHomeId':
+        case 'tibberApiKey':
+          MyApp.appInstance.initTibber();
+          break;
+        default:
+          break;
+      }
     });
     this.initTibber();
   }
@@ -27,7 +34,6 @@ class MyApp extends Homey.App {
 
     if (this.homey.settings.get('tibberApiKey')) {
       this.loadTibberPrices(function(data) {
-        // console.log(JSON.stringify(data));
         MyApp.appInstance.updateAnimation();
         MyApp.updateAnimationTimer = setInterval(MyApp.appInstance.updateAnimation, 59 * 1000);
       });
@@ -39,8 +45,23 @@ class MyApp extends Homey.App {
   /**
    * Update animation using current Tibber prices
    */
-  updateAnimation() {
-    if (!MyApp.tibberPrices || !MyApp.tibberPrices.data) return;
+  async updateAnimation() {
+    let selectedHomeId = MyApp.appInstance.homey.settings.get('selectedHomeId');
+    let selectedHome = null;
+
+    if (selectedHomeId && MyApp.tibberPrices && MyApp.tibberPrices.data) {
+      for (const home of MyApp.tibberPrices.data.viewer.homes) {
+        if (home.id == selectedHomeId) selectedHome = home;
+      }
+    }
+
+    if (!MyApp.tibberPrices || !MyApp.tibberPrices.data || !selectedHome) {
+      if (this.ledRingAnimation) {
+        await this.ledRingAnimation.stop();
+        this.ledRingAnimation = null;
+      }
+      return;
+    }
 
     let priceRgb = {
       "VERY_CHEAP": [ 0, 255, 0 ],
@@ -58,13 +79,13 @@ class MyApp extends Homey.App {
     // console.log(Date.parse(currentPrice.startsAt));
     let startHour = 0;
     while (startHour < 23 && 
-      Date.parse(MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.today[startHour+1].startsAt) < currentDate) {
+      Date.parse(selectedHome.currentSubscription.priceInfo.today[startHour+1].startsAt) < currentDate) {
         startHour++;
     }
 
     // Add colors for current day
-    for (let pixelIndex = 0; pixelIndex < MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.today.length; pixelIndex++) {
-      let rgb = priceRgb[MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.today[pixelIndex].level];
+    for (let pixelIndex = 0; pixelIndex < selectedHome.currentSubscription.priceInfo.today.length; pixelIndex++) {
+      let rgb = priceRgb[selectedHome.currentSubscription.priceInfo.today[pixelIndex].level];
       let colors = {
         r: Math.round(rgb[0] / (pixelIndex == startHour ? 1 : 10)),
         g: Math.round(rgb[1] / (pixelIndex == startHour ? 1 : 10)),
@@ -74,10 +95,10 @@ class MyApp extends Homey.App {
     }
 
     // Add colors for next day's prices (if available)
-    if (MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow &&
-      MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow.length) {
-      for (let pixelIndex = 0; pixelIndex < MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow.length; pixelIndex++) {
-        let rgb = priceRgb[MyApp.tibberPrices.data.viewer.homes[0].currentSubscription.priceInfo.tomorrow[pixelIndex].level];
+    if (selectedHome.currentSubscription.priceInfo.tomorrow &&
+      selectedHome.currentSubscription.priceInfo.tomorrow.length) {
+      for (let pixelIndex = 0; pixelIndex < selectedHome.currentSubscription.priceInfo.tomorrow.length; pixelIndex++) {
+        let rgb = priceRgb[selectedHome.currentSubscription.priceInfo.tomorrow[pixelIndex].level];
         let colors = {
           r: rgb[0] / 10,
           g: rgb[1] / 10,
