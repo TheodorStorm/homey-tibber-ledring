@@ -1,6 +1,7 @@
 'use strict';
 
 const Homey = require('homey');
+const { HomeyAPIApp } = require('homey-api');
 const https = require('https');
 
 class MyApp extends Homey.App {
@@ -26,6 +27,8 @@ class MyApp extends Homey.App {
       }
     });
     this.initTibber();
+
+    this.api = new HomeyAPIApp({ homey: this.homey });
   }
 
   initTibber() {
@@ -124,7 +127,7 @@ class MyApp extends Homey.App {
     for (let i = 0; i < startHour; i++) frame.push(frame.shift());
 
     // console.log(startHour);
-    console.log(frame);
+    // console.log(frame);
 
     // Add frame to animation
     frames.push(frame);
@@ -185,7 +188,7 @@ class MyApp extends Homey.App {
    * Load prices from Tibber API
    */  
   loadTibberPrices(callback) {
-    let json = { "query": "{ viewer { homes { id appNickname address { address1 city } currentSubscription { priceInfo { current { level startsAt } today { level startsAt } tomorrow { level startsAt } } } } } }" };
+    let json = { "query": "{ viewer { homes { id appNickname address { address1 city } currentSubscription { priceInfo { current { energy total level startsAt } today { energy total level startsAt } tomorrow { energy total level startsAt } } } } } }" };
     let options = {
       host: 'api.tibber.com',
       port: 443,

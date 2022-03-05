@@ -4,11 +4,8 @@
   },
   "class": "other",
   "capabilities": [
-    "meter_power",
-    "measure_power"
+    "measure_cost"
   ],
-  "capabilitiesOptions": {
-  },
   "platforms": [
     "local"
   ],

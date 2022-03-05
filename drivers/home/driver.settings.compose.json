@@ -1,0 +1,17 @@
+[
+    {
+      "id": "ledring",
+      "type": "checkbox",
+      "label": { "en": "Tibber LED Ring" },
+      "value": false,
+      "hint": { "en": "Colors the Homey Pro LED ring according to energy price." }
+    },
+    {
+      "id": "base_rate",
+      "type": "number",
+      "label": { "en": "Power base rate" },
+      "value": 0.305,
+      "min": 0,
+      "units": { "en": "¤/kWh" }
+    }    
+]

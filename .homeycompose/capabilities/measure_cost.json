@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": "Power cost",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "¤/h" },
+    "uiComponent": "sensor",
+    "icon": "/assets/scarab.svg",
+    "insights": true
+}

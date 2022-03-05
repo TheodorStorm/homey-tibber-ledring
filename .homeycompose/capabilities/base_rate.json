@@ -1,0 +1,11 @@
+{
+    "type": "number",
+    "title": "Base rate charge",
+    "getable": true,
+    "setable": true,
+    "value": 0.305,
+    "units": { "en": "¤/kWh" },
+    "uiComponent": "sensor",
+    "icon": "/assets/scarab.svg",
+    "insights": false
+}

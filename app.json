@@ -18,7 +18,8 @@
     "tools"
   ],
   "permissions": [
-    "homey:manager:ledring"
+    "homey:manager:ledring",
+    "homey:manager:api"
   ],
   "images": {
     "small": "/assets/images/small.jpg",
@@ -36,10 +37,8 @@
       },
       "class": "other",
       "capabilities": [
-        "meter_power",
-        "measure_power"
+        "measure_cost"
       ],
-      "capabilitiesOptions": {},
       "platforms": [
         "local"
       ],
@@ -77,15 +76,52 @@
           "hint": {
             "en": "Colors the Homey Pro LED ring according to energy price."
           }
+        },
+        {
+          "id": "base_rate",
+          "type": "number",
+          "label": {
+            "en": "Power base rate"
+          },
+          "value": 0.305,
+          "min": 0,
+          "units": {
+            "en": "¤/kWh"
+          }
         }
       ]
     }
   ],
   "capabilities": {
+    "base_rate": {
+      "type": "number",
+      "title": "Base rate charge",
+      "getable": true,
+      "setable": true,
+      "value": 0.305,
+      "units": {
+        "en": "¤/kWh"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg",
+      "insights": false
+    },
+    "measure_cost": {
+      "type": "number",
+      "title": "Power cost",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤/h"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg",
+      "insights": true
+    },
     "price_level": {
       "type": "number",
       "title": {
-        "en": "Price Level"
+        "en": "Price level"
       },
       "uiComponent": "color",
       "getable": true,
