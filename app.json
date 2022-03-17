@@ -37,8 +37,14 @@
       },
       "class": "other",
       "capabilities": [
+        "meter_power",
+        "measure_power_usage",
+        "measure_power_excess",
         "measure_cost"
       ],
+      "energy": {
+        "cumulative": true
+      },
       "platforms": [
         "local"
       ],
@@ -116,6 +122,30 @@
       },
       "uiComponent": "sensor",
       "icon": "/assets/scarab.svg",
+      "insights": true
+    },
+    "measure_power_excess": {
+      "type": "number",
+      "title": "Excess Power",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "W"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/solar.svg",
+      "insights": true
+    },
+    "measure_power_usage": {
+      "type": "number",
+      "title": "Power Usage",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "W"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/power.svg",
       "insights": true
     },
     "price_level": {

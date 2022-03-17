@@ -4,6 +4,8 @@ const { Device } = require('homey');
 
 class MyDevice extends Device {
   updateTimer;
+  lastSync = 0;
+  lastWatt = 0;
 
   /**
    * onInit is called when the device is initialized.
@@ -13,10 +15,13 @@ class MyDevice extends Device {
 
     if (!this.hasCapability('measure_cost')) await this.addCapability('measure_cost');
     if (!this.hasCapability('base_rate')) await this.addCapability('base_rate');
-    if (this.hasCapability('meter_power')) await this.removeCapability('meter_power');
-    if (this.hasCapability('measure_power')) await this.removeCapability('measure_power');
+    if (!this.hasCapability('meter_power')) await this.addCapability('meter_power');
+    if (!this.hasCapability('measure_power_usage')) await this.addCapability('measure_power_usage');
+    if (!this.hasCapability('measure_power_excess')) await this.addCapability('measure_power_excess');
     if (this.hasCapability('onoff')) await this.removeCapability('onoff');
     if (this.hasCapability('price_level')) await this.removeCapability('price_level');
+    if (this.hasCapability('measure_power')) await this.removeCapability('measure_power');
+    if (this.hasCapability('measure_power_use')) await this.removeCapability('measure_power_use');
 
     const deviceSettings = this.getSettings();
     const appSettings = this.homey.settings;
@@ -56,19 +61,40 @@ class MyDevice extends Device {
           //console.log(report);
 
           const total_cost = base_rate + home.currentSubscription.priceInfo.current.total;
-          const watt = report.totalConsumed.W;
-          const gen = report.totalGenerated.W;
+          const watt = report.totalConsumed.W || 0;
+          const gen = report.totalGenerated.W || 0;
           const kw = (watt-gen)/1000;
           
+          this.setCapabilityValue('measure_power_usage', Math.round(watt));
+          this.setCapabilityValue('measure_power_excess', Math.max(0, Math.round(gen-watt)));
+
           if (kw > 0) {
             this.setCapabilityValue('measure_cost', Math.round(total_cost * kw * 100)/100);            
           } else {
             this.setCapabilityValue('measure_cost', Math.round(home.currentSubscription.priceInfo.current.energy * kw * 100)/100);
           }
+          let now = new Date().getTime(); // milliseconds
+
+          if (this.lastSync>0) {
+            let meter_power = this.getStoreValue('meter_power') || 0;
+            let last_day = this.getStoreValue('last_day') || 0;
+            let current_day = new Date().getDate(); // Date of month
+            if (current_day != last_day) {
+              meter_power = 0;
+              this.setStoreValue('last_day', current_day);
+            }
+
+            const power_add = ((watt + this.lastWatt) / 2000) * ((now - this.lastSync) / (1000 * 60 * 60) );
+            meter_power += power_add;
+            this.setStoreValue('meter_power', meter_power);
+            this.setCapabilityValue('meter_power', Math.round((meter_power) * 100)/100).catch(this.error);
+          }
 
           //console.log(total_cost);
           //console.log(kw);
 
+          this.lastWatt = watt;
+          this.lastSync = now;
         }
       }
     }

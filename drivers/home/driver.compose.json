@@ -4,8 +4,14 @@
   },
   "class": "other",
   "capabilities": [
+    "meter_power",
+    "measure_power_usage",
+    "measure_power_excess",
     "measure_cost"
   ],
+  "energy": {
+    "cumulative": true
+  },
   "platforms": [
     "local"
   ],

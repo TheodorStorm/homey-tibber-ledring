@@ -1,0 +1,11 @@
+{
+    "type": "number",
+    "title": "Excess Power",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "W" },
+    "uiComponent": "sensor",
+    "icon": "/assets/solar.svg",
+    "insights": true
+  }
+  

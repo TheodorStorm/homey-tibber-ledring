@@ -188,7 +188,42 @@ class MyApp extends Homey.App {
    * Load prices from Tibber API
    */  
   loadTibberPrices(callback) {
-    let json = { "query": "{ viewer { homes { id appNickname address { address1 city } currentSubscription { priceInfo { current { energy total level startsAt } today { energy total level startsAt } tomorrow { energy total level startsAt } } } } } }" };
+    let json = { "query" : "\
+    {\
+      viewer {\
+        homes {\
+          id\
+          appNickname\
+          address {\
+            address1\
+            city\
+          }\
+          currentSubscription {\
+            priceInfo {\
+              current {\
+                energy\
+                total\
+                level\
+                startsAt\
+              }\
+              today {\
+                energy\
+                total\
+                level\
+                startsAt\
+              }\
+              tomorrow {\
+                energy\
+                total\
+                level\
+                startsAt\
+              }\
+            }\
+          }\
+        }\
+      }\
+    }\
+    " };
     let options = {
       host: 'api.tibber.com',
       port: 443,
@@ -207,7 +242,6 @@ class MyApp extends Homey.App {
       });
       res.on('end', function(){
           MyApp.tibberPrices = JSON.parse(body);
-          //console.log(body);
           MyApp.appInstance.homey.settings.set('tibberData', MyApp.tibberPrices);
           if (callback) callback(MyApp.tibberPrices);
       });
