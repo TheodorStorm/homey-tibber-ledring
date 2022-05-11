@@ -1,0 +1,11 @@
+{
+    "type": "number",
+    "title": "Power Usage",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "W" },
+    "uiComponent": "sensor",
+    "icon": "/assets/power.svg",
+    "insights": true
+  }
+  
