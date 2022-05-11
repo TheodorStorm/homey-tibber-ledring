@@ -67,12 +67,8 @@ class MyDevice extends Device {
           
           this.setCapabilityValue('measure_power_usage', Math.round(watt));
           this.setCapabilityValue('measure_power_excess', Math.max(0, Math.round(gen-watt)));
+          this.setCapabilityValue('measure_cost', Math.round(total_cost * kw * 100)/100);
 
-          if (kw > 0) {
-            this.setCapabilityValue('measure_cost', Math.round(total_cost * kw * 100)/100);            
-          } else {
-            this.setCapabilityValue('measure_cost', Math.round(home.currentSubscription.priceInfo.current.energy * kw * 100)/100);
-          }
           let now = new Date().getTime(); // milliseconds
 
           if (this.lastSync>0) {
@@ -125,7 +121,9 @@ class MyDevice extends Device {
       appSettings.set("selectedHomeId", null);
     }
 
-    this.setCapabilityValue('base_rate', newSettings.base_rate.value);
+    if (newSettings.base_rate) {
+      this.setCapabilityValue('base_rate', newSettings.base_rate);
+    }
   }
 
   /**
