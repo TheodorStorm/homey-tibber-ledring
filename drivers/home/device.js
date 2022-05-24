@@ -58,15 +58,15 @@ class MyDevice extends Device {
         if (home.id == this.getData().id) {
           //console.log(base_rate);
           //console.log(home.currentSubscription);
-          //console.log(report);
+          console.log(report);
 
           const total_cost = base_rate + home.currentSubscription.priceInfo.current.total;
           const watt = report.totalConsumed.W || 0;
           const gen = report.totalGenerated.W || 0;
-          const kw = (watt-gen)/1000;
+          const kw = report.totalCumulative.W/1000;
           
-          this.setCapabilityValue('measure_power_usage', Math.round(watt));
-          this.setCapabilityValue('measure_power_excess', Math.max(0, Math.round(gen-watt)));
+          this.setCapabilityValue('measure_power_usage', Math.round(report.totalCumulative.W+gen));
+          this.setCapabilityValue('measure_power_excess', Math.max(0, -report.totalCumulative.W));
           this.setCapabilityValue('measure_cost', Math.round(total_cost * kw * 100)/100);
 
           let now = new Date().getTime(); // milliseconds
