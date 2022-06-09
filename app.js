@@ -241,9 +241,13 @@ class MyApp extends Homey.App {
           body += chunk;
       });
       res.on('end', function(){
+        try {
           MyApp.tibberPrices = JSON.parse(body);
           MyApp.appInstance.homey.settings.set('tibberData', MyApp.tibberPrices);
           if (callback) callback(MyApp.tibberPrices);
+        } catch (ex) {
+          console.error(ex);
+        }
       });
     });
 
